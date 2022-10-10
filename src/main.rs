@@ -25,11 +25,23 @@ fn main() {
         }
     };
 
-    let rkyv_encoded = compress(rkyv::to_bytes::<_, 256>(&block).unwrap());
-    let scale_encoded = compress(parity_scale_codec::Encode::encode(&block));
-    let rlp_encoded = compress(fastrlp::encode_fixed_size(&block));
+    let rlp_encoded = fastrlp::encode_fixed_size(&block);
+    let scale_encoded = parity_scale_codec::Encode::encode(&block);
+    let rkyv_encoded = rkyv::to_bytes::<_, 256>(&block).unwrap();
 
-    println!("{:?}\n{:?}\n{:?}", rkyv_encoded, scale_encoded, rlp_encoded);
+    println!("rlp: {}", rlp_encoded.len());
+    println!("scale: {}", scale_encoded.len());
+    println!("rkyv: {}", rkyv_encoded.len());
+
+    println!();
+
+    let rlp_encoded_compressed = compress(fastrlp::encode_fixed_size(&block));
+    let scale_encoded_compressed = compress(parity_scale_codec::Encode::encode(&block));
+    let rkyv_encoded_compressed = compress(rkyv::to_bytes::<_, 256>(&block).unwrap());
+
+    println!("rlp compressed: {}", rlp_encoded_compressed.len());
+    println!("scale compressed: {}", scale_encoded_compressed.len());
+    println!("rkyv compressed: {}", rkyv_encoded_compressed.len());
 }
 
 fn compress(source: impl AsRef<[u8]>) -> Vec<u8> {
