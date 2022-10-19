@@ -86,9 +86,5 @@ pub fn rlp(target: impl fastrlp::Encodable) -> Vec<u8> {
 }
 
 pub fn compress(source: impl AsRef<[u8]>) -> Vec<u8> {
-    zstd::bulk::compress(
-        source.as_ref(),
-        zstd::compression_level_range().max().unwrap(),
-    )
-    .unwrap()
+    zstd::bulk::compress(source.as_ref(), 0).unwrap()
 }
