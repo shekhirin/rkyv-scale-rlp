@@ -69,14 +69,14 @@ pub static MESSAGE: Lazy<EIP1559MessageWithSignature> = Lazy::new(|| {
     }
 });
 
-pub fn scale(target: &impl parity_scale_codec::Encode) -> Vec<u8> {
-    parity_scale_codec::Encode::encode(target)
+pub fn scale(target: impl parity_scale_codec::Encode) -> Vec<u8> {
+    parity_scale_codec::Encode::encode(&target)
 }
 
 pub fn rkyv(
-    target: &impl rkyv::Serialize<rkyv::ser::serializers::AllocSerializer<256>>,
+    target: impl rkyv::Serialize<rkyv::ser::serializers::AllocSerializer<256>>,
 ) -> rkyv::AlignedVec {
-    rkyv::to_bytes(target).unwrap()
+    rkyv::to_bytes(&target).unwrap()
 }
 
 pub fn rlp(target: impl fastrlp::Encodable) -> Vec<u8> {

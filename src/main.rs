@@ -22,8 +22,8 @@ fn compare(
         + fastrlp::Encodable,
 ) {
     let rlp_encoded = rlp(target.clone());
-    let scale_encoded = scale(&target);
-    let rkyv_encoded = rkyv(&target);
+    let scale_encoded = scale(target.clone());
+    let rkyv_encoded = rkyv(target.clone());
 
     println!("rlp: {}", rlp_encoded.len());
     println!("scale (compact): {}", scale_encoded.len());
