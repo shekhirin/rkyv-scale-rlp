@@ -1,5 +1,5 @@
-use crate::impls::{H160, H256};
-use crate::wrapper::{BytesWrapper, U256Wrapper};
+use crate::numbers::{H160, H256};
+use crate::wrappers::{BytesWrapper, U256Wrapper};
 use bytes::Bytes;
 use ruint::aliases::U256;
 

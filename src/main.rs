@@ -1,7 +1,7 @@
 mod header;
-mod impls;
 mod message;
-mod wrapper;
+mod numbers;
+mod wrappers;
 
 use rkyv_scale_rlp::{compress, rkyv, rlp, scale, BLOCK, MESSAGE};
 

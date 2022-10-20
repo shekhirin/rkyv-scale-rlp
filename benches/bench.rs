@@ -1,4 +1,4 @@
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use criterion::{criterion_group, criterion_main, Criterion};
 use rkyv_scale_rlp::{compress, rkyv, rlp, scale, BLOCK, MESSAGE};
 
 fn bench_block(c: &mut Criterion) {

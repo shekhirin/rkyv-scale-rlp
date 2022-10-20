@@ -20,14 +20,14 @@ impl ArchiveWith<U256> for U256Wrapper {
         resolver: Self::Resolver,
         out: *mut Self::Archived,
     ) {
-        crate::impls::Uint::<256, 4>(*field).resolve(pos, resolver, out)
+        crate::numbers::Uint::<256, 4>(*field).resolve(pos, resolver, out)
     }
 }
 
 impl<S: Serializer> SerializeWith<U256, S> for U256Wrapper {
     #[inline]
     fn serialize_with(field: &U256, serializer: &mut S) -> Result<Self::Resolver, S::Error> {
-        crate::impls::Uint::<256, 4>(*field).serialize(serializer)
+        crate::numbers::Uint::<256, 4>(*field).serialize(serializer)
     }
 }
 

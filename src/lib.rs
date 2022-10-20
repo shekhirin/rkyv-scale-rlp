@@ -1,9 +1,9 @@
 mod header;
-mod impls;
 mod message;
-mod wrapper;
+mod numbers;
+mod wrappers;
 
-use crate::impls::{Bloom, H160, H256, H64};
+use crate::numbers::{Bloom, H160, H256, H64};
 use header::*;
 use message::*;
 

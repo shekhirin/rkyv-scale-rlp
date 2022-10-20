@@ -1,5 +1,5 @@
-use crate::impls::{Bloom, H160, H256, H64};
-use crate::wrapper::U256Wrapper;
+use crate::numbers::{Bloom, H160, H256, H64};
+use crate::wrappers::U256Wrapper;
 use ruint::aliases::U256;
 
 #[derive(
