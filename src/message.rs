@@ -4,7 +4,14 @@ use bytes::Bytes;
 use ruint::aliases::U256;
 
 #[derive(
-    Clone, rkyv::Archive, rkyv::Serialize, parity_scale_codec::Encode, fastrlp::RlpEncodable,
+    Clone,
+    rkyv::Archive,
+    rkyv::Serialize,
+    rkyv::Deserialize,
+    parity_scale_codec::Encode,
+    parity_scale_codec::Decode,
+    fastrlp::RlpEncodable,
+    fastrlp::RlpDecodable,
 )]
 pub struct EIP1559MessageWithSignature {
     pub message: EIP1559Message,
@@ -12,7 +19,14 @@ pub struct EIP1559MessageWithSignature {
 }
 
 #[derive(
-    Clone, rkyv::Archive, rkyv::Serialize, parity_scale_codec::Encode, fastrlp::RlpEncodable,
+    Clone,
+    rkyv::Archive,
+    rkyv::Serialize,
+    rkyv::Deserialize,
+    parity_scale_codec::Encode,
+    parity_scale_codec::Decode,
+    fastrlp::RlpEncodable,
+    fastrlp::RlpDecodable,
 )]
 pub struct EIP1559Message {
     #[codec(compact)]
@@ -37,7 +51,14 @@ pub struct EIP1559Message {
 }
 
 #[derive(
-    Clone, rkyv::Archive, rkyv::Serialize, parity_scale_codec::Encode, fastrlp::RlpEncodable,
+    Clone,
+    rkyv::Archive,
+    rkyv::Serialize,
+    rkyv::Deserialize,
+    parity_scale_codec::Encode,
+    parity_scale_codec::Decode,
+    fastrlp::RlpEncodable,
+    fastrlp::RlpDecodable,
 )]
 pub struct AccessListItem {
     pub address: H160,
@@ -45,7 +66,14 @@ pub struct AccessListItem {
 }
 
 #[derive(
-    Clone, rkyv::Archive, rkyv::Serialize, parity_scale_codec::Encode, fastrlp::RlpEncodable,
+    Clone,
+    rkyv::Archive,
+    rkyv::Serialize,
+    rkyv::Deserialize,
+    parity_scale_codec::Encode,
+    parity_scale_codec::Decode,
+    fastrlp::RlpEncodable,
+    fastrlp::RlpDecodable,
 )]
 pub struct MessageSignature {
     pub odd_y_parity: bool,

@@ -1,13 +1,18 @@
 macro_rules! hash {
     ($name:ident, $n_bytes:expr) => {
         #[derive(
-            Clone, parity_scale_codec::Encode, fastrlp::RlpEncodable, fastrlp::RlpMaxEncodedLen,
+            Clone,
+            parity_scale_codec::Encode,
+            parity_scale_codec::Decode,
+            fastrlp::RlpEncodable,
+            fastrlp::RlpDecodable,
+            fastrlp::RlpMaxEncodedLen,
         )]
         pub struct $name(pub ethereum_types::$name);
 
         impl rkyv::Archive for $name {
-            type Archived = [<u8 as rkyv::Archive>::Archived; $n_bytes];
-            type Resolver = [<u8 as rkyv::Archive>::Resolver; $n_bytes];
+            type Archived = rkyv::Archived<[u8; $n_bytes]>;
+            type Resolver = rkyv::Resolver<[u8; $n_bytes]>;
 
             unsafe fn resolve(
                 &self,
@@ -24,6 +29,16 @@ macro_rules! hash {
                 self.0 .0.serialize(serializer)
             }
         }
+
+        impl<D: rkyv::Fallible + ?Sized> rkyv::Deserialize<$name, D>
+            for rkyv::Archived<[u8; $n_bytes]>
+        {
+            fn deserialize(&self, deserializer: &mut D) -> Result<$name, D::Error> {
+                Ok($name(ethereum_types::$name(
+                    self.deserialize(deserializer)?,
+                )))
+            }
+        }
     };
 }
 
@@ -35,8 +50,8 @@ hash!(Bloom, 256);
 pub struct Uint<const BITS: usize, const LIMBS: usize>(pub ruint::Uint<BITS, LIMBS>);
 
 impl<const BITS: usize, const LIMBS: usize> rkyv::Archive for Uint<BITS, LIMBS> {
-    type Archived = [<u64 as rkyv::Archive>::Archived; LIMBS];
-    type Resolver = [<u64 as rkyv::Archive>::Resolver; LIMBS];
+    type Archived = rkyv::Archived<[u64; LIMBS]>;
+    type Resolver = rkyv::Resolver<[u64; LIMBS]>;
 
     unsafe fn resolve(&self, pos: usize, resolver: Self::Resolver, out: *mut Self::Archived) {
         self.0.as_limbs().resolve(pos, resolver, out)
@@ -48,5 +63,15 @@ impl<const BITS: usize, const LIMBS: usize, S: rkyv::ser::Serializer> rkyv::Seri
 {
     fn serialize(&self, serializer: &mut S) -> Result<Self::Resolver, S::Error> {
         self.0.as_limbs().serialize(serializer)
+    }
+}
+
+impl<const BITS: usize, const LIMBS: usize, D: rkyv::Fallible + ?Sized>
+    rkyv::Deserialize<Uint<BITS, LIMBS>, D> for rkyv::Archived<[u64; LIMBS]>
+{
+    fn deserialize(&self, deserializer: &mut D) -> Result<Uint<BITS, LIMBS>, D::Error> {
+        Ok(Uint(ruint::Uint::<BITS, LIMBS>::from_limbs(
+            self.deserialize(deserializer)?,
+        )))
     }
 }

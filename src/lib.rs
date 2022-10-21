@@ -1,14 +1,18 @@
-mod header;
+mod block;
 mod message;
 mod numbers;
 mod wrappers;
 
 use crate::numbers::{Bloom, H160, H256, H64};
-use header::*;
-use message::*;
+pub use block::*;
+pub use message::*;
 
-use crate::{Block, BlockHeader, EIP1559Message, EIP1559MessageWithSignature, MessageSignature};
+pub use crate::{
+    Block, BlockHeader, EIP1559Message, EIP1559MessageWithSignature, MessageSignature,
+};
 use once_cell::sync::Lazy;
+use rkyv::de::deserializers::SharedDeserializeMap;
+use rkyv::Deserialize;
 use ruint::aliases::U256;
 use std::str::FromStr;
 
@@ -27,7 +31,7 @@ pub static BLOCK: Lazy<Block> = Lazy::new(|| {
             gas_limit: 30000000,
             gas_used: 27578524,
             timestamp: 1665222299,
-            // extra_data: Default::default(),
+            extra_data: Default::default(),
             mix_hash: H256(ethereum_types::H256::from_str("0xeee4bdd8efcf6a26a1857835b4980c56e17d735ef5bbf265123253043b3b4f95").unwrap()),
             nonce: H64(ethereum_types::H64::default()),
             base_fee_per_gas: U256::from_str("8164745781").unwrap(),
@@ -69,22 +73,42 @@ pub static MESSAGE: Lazy<EIP1559MessageWithSignature> = Lazy::new(|| {
     }
 });
 
-pub fn scale(target: impl parity_scale_codec::Encode) -> Vec<u8> {
+pub fn scale_serialize(target: impl parity_scale_codec::Encode) -> Vec<u8> {
     parity_scale_codec::Encode::encode(&target)
 }
 
-pub fn rkyv(
+pub fn scale_deserialize<T: parity_scale_codec::Decode>(input: impl AsRef<[u8]>) -> T {
+    T::decode(&mut input.as_ref()).unwrap()
+}
+
+pub fn rkyv_serialize(
     target: impl rkyv::Serialize<rkyv::ser::serializers::AllocSerializer<256>>,
 ) -> rkyv::AlignedVec {
     rkyv::to_bytes(&target).unwrap()
 }
 
-pub fn rlp(target: impl fastrlp::Encodable) -> Vec<u8> {
+pub fn rkyv_deserialize<T>(input: impl AsRef<[u8]>) -> T
+where
+    T: rkyv::Archive,
+    T::Archived: Deserialize<T, SharedDeserializeMap>,
+{
+    unsafe { rkyv::from_bytes_unchecked::<T>(input.as_ref()).unwrap() }
+}
+
+pub fn rlp_serialize(target: impl fastrlp::Encodable) -> Vec<u8> {
     let mut encoded = Vec::new();
-    fastrlp::encode_list(&[target], &mut encoded);
+    target.encode(&mut encoded);
     encoded
+}
+
+pub fn rlp_deserialize<T: fastrlp::Decodable>(input: impl AsRef<[u8]>) -> T {
+    T::decode(&mut input.as_ref()).unwrap()
 }
 
 pub fn compress(source: impl AsRef<[u8]>) -> Vec<u8> {
     zstd::bulk::compress(source.as_ref(), 0).unwrap()
+}
+
+pub fn decompress(source: impl AsRef<[u8]>, capacity: usize) -> impl AsRef<[u8]> {
+    zstd::bulk::decompress(source.as_ref(), capacity).unwrap()
 }

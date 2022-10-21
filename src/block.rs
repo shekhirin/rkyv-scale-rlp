@@ -1,9 +1,17 @@
 use crate::numbers::{Bloom, H160, H256, H64};
-use crate::wrappers::U256Wrapper;
+use crate::wrappers::{BytesWrapper, U256Wrapper};
+use bytes::Bytes;
 use ruint::aliases::U256;
 
 #[derive(
-    Clone, rkyv::Archive, rkyv::Serialize, parity_scale_codec::Encode, fastrlp::RlpEncodable,
+    Clone,
+    rkyv::Archive,
+    rkyv::Serialize,
+    rkyv::Deserialize,
+    parity_scale_codec::Encode,
+    parity_scale_codec::Decode,
+    fastrlp::RlpEncodable,
+    fastrlp::RlpDecodable,
 )]
 pub struct BlockHeader {
     pub parent_hash: H256,
@@ -20,7 +28,8 @@ pub struct BlockHeader {
     pub gas_limit: u64,
     pub gas_used: u64,
     pub timestamp: u64,
-    // pub extra_data: Bytes,
+    #[with(BytesWrapper)]
+    pub extra_data: Bytes,
     pub mix_hash: H256,
     pub nonce: H64,
     #[codec(compact)]
@@ -29,7 +38,14 @@ pub struct BlockHeader {
 }
 
 #[derive(
-    Clone, rkyv::Archive, rkyv::Serialize, parity_scale_codec::Encode, fastrlp::RlpEncodable,
+    Clone,
+    rkyv::Archive,
+    rkyv::Serialize,
+    rkyv::Deserialize,
+    parity_scale_codec::Encode,
+    parity_scale_codec::Decode,
+    fastrlp::RlpEncodable,
+    fastrlp::RlpDecodable,
 )]
 pub struct Block {
     pub header: BlockHeader,
