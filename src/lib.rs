@@ -106,7 +106,7 @@ pub fn rlp_deserialize<T: fastrlp::Decodable>(input: impl AsRef<[u8]>) -> T {
 }
 
 pub fn compress(source: impl AsRef<[u8]>) -> Vec<u8> {
-    zstd::bulk::compress(source.as_ref(), 0).unwrap()
+    zstd::bulk::compress(source.as_ref(), -6).unwrap()
 }
 
 pub fn decompress(source: impl AsRef<[u8]>, capacity: usize) -> impl AsRef<[u8]> {
